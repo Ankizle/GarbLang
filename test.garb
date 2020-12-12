@@ -1,0 +1,4 @@
+fn <_start>() {
+    var <a>
+    mov <a>, 10
+}

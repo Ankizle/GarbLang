@@ -14,9 +14,8 @@ extern "C" {
 
 //read token data at compile-time
 const char* raw_tokens = 
-{
-    #include "tokens.data"
-};
+#include "tokens.data"
+;
 
 typedef struct {
     char* name;
@@ -90,7 +89,7 @@ token* lexer(char* filename) {
 
     int i, o, j;
 
-    token tokens[1];
+    token* tokens = malloc(sizeof(token));
     token* prev = &tokens[0];
     
     for (i = 0; i < size; i++) {
@@ -111,18 +110,36 @@ token* lexer(char* filename) {
 
             if (full_source[i] == '-' || full_source[i] == '+') i++;
 
-            #define cond \
-            isdigit(full_source[j]) || full_source[j] == '.' || full_source[j] == 'L' || full_source[j] == 'C' || full_source[j] == 'U' || full_source[j] == 'F' || full_source[j] == 'D'
+            #define cond(it) \
+            isdigit(full_source[it]) || full_source[it] == '.' || full_source[it] == 'L' || full_source[it] == 'C' || full_source[it] == 'U' || full_source[it] == 'F' || full_source[it] == 'D'
 
             int size = 0;
-            for (j = i; cond; j++, size++);
+            for (j = i; cond(j); j++, size++);
             char* numstr = calloc(size + 1, sizeof(char));
             numstr[size] = 0; //null terminatpr
-            for (;cond; i++)
+            for (;cond(i); i++)
                 numstr[j - size + i] = full_source[i];
 
             token* t = malloc(sizeof(token));
             t->name = numstr;
+            prev->next = t;
+
+            prev = t;
+            goto cont;
+        } else if (full_source[i] == '<') {
+            char* name;
+            int size = 0;
+            i++;
+            for (int o = i; full_source[o] != '>'; o++, size++); //get size
+            name = calloc(size + 3, sizeof(char)); //alloc space for var name
+            name[0] =  '<';
+            name[size + 1] = '>';
+            name[size + 2] = 0; //null term
+            for (int c = 1; full_source[i] != '>'; i++, c++)
+                name[c] = full_source[i];
+
+            token* t = malloc(sizeof(token));
+            t->name = name;
             prev->next = t;
 
             prev = t;
@@ -132,18 +149,14 @@ token* lexer(char* filename) {
         cont:;
     }
 
-    token* cur = tokens[0].next;
-
-    while (cur != NULL) {
-        printf("%s\n", cur->name);
-        cur = cur->next;
-    }
+    token* cur = tokens->next;
 
     //free data
     for (i = 0; i < parsed.tokenamt; i++)
         free(parsed.tokens[i].name);
 
     free(parsed.tokens);
+    return tokens;
 }
 
 #ifdef __cplusplus
