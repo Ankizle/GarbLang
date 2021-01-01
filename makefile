@@ -1,10 +1,13 @@
 .PHONY: all
-all: garblang.bin
+all: action.o garblang.bin
 
 .PHONY: clean
 clean:
-	rm -rf garblang.bin
+	rm -rf garblang.bin action.o
 
 .PHONY: garblang.bin
 garblang.bin:
-	gcc index.c -o garblang.bin
+	gcc index.c -o garblang.bin action.o
+
+action.o:
+	g++ parser/actionizer.cc -c -o action.o

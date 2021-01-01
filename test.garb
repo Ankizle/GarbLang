@@ -1,4 +1,4 @@
-fn <_start>() {
-    var <a>
-    mov <a>, 10
+{
+    var a
+    mov a, 1
 }

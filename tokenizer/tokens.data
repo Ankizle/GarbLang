@@ -1,9 +1,8 @@
 R"(fn
-(
-)
 {
 }
 ,
+:
 var
 mov
 add
