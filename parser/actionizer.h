@@ -1,35 +1,86 @@
-#include <stdlib.h>
+#ifndef ACTIONIZER_H_
+#define ACTIONIZER_H_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <string.h>
-#include "group.h"
+#include <stdio.h>
 #include "action.h"
+#include "group.h"
 
-void push_back_action(struct action **list, size_t curlen, struct action value)
-{
-    *list = (struct action *)realloc(*list, curlen + 1);
-    *list[curlen] = value;
-}
-
-struct action *actionizer(group *groups)
-{
-    struct action *actions;
-    size_t action_size = 0;
-
-    group *nested = groups->nested;
-
-    for (int i = 0; i < groups->nested_len; i++)
+    struct action actionize(group *groups)
     {
 
-        if (strcmp(nested[i].name, "group") == 0)
+        struct action *fin = NULL;
+        size_t action_len = 0;
+
+        for (int i = 0; i < groups->nested_len; i++)
         {
-            //its a group
+
+            if (strcmp(groups->nested[i].name, "fn") == 0)
+            {
+                //function
+
+                struct action a;
+                a.name = "function";
+                a.fnname = groups->nested[++i].name;
+
+                struct action actionized = actionize(&groups->nested[i + 1]);
+
+                a.nested = actionized.nested;
+                a.nested_len = actionized.nested_len;
+                push_back_actions(&fin, &action_len, a);
+            }
+            else if (strcmp(groups->nested[i].name, "group") == 0)
+            {
+                //group
+                struct action a = actionize(groups->nested[i].nested);
+                free(groups->nested[i].nested);
+                push_back_actions(&fin, &action_len, a);
+            }
+            else
+            {
+                //regular instruction
+                struct action a;
+                a.name = groups->nested[i++].name;
+
+                token **operands = NULL;
+                size_t operands_len = 0;
+
+                for (; i < groups->nested_len; i++)
+                {
+#define isComma (strcmp(groups->nested[i].name, ",") == 0)
+#define isNextComma (strcmp(groups->nested[i + 1].name, ",") == 0)
+
+                    if (!isComma)
+                        push_back_operands(&operands, &operands_len, groups->nested[i].token);
+
+                    if (i + 1 != groups->nested_len && isComma == isNextComma)
+                        break;
+                }
+
+                a.operands = operands;
+                a.operands_len = operands_len;
+
+                push_back_actions(&fin, &action_len, a);
+            }
         }
-        else if (strcmp(nested[i].name, "fn") == 0)
-        {
-            //its a function
-        }
-        else
-        {
-            //its a default instruction
-        }
+
+        free(groups->nested);
+
+        //action struct to store the final list
+        struct action ret;
+        ret.nested = fin;
+        ret.nested_len = action_len;
+
+        return ret;
     }
+
+#ifdef __clusplus
 }
+#endif
+
+#endif

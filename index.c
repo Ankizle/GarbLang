@@ -2,11 +2,10 @@
 #error "GarbLang is Unix Only" //throw error if it is not unix
 #endif
 
-#include <stdio.h>
 #include "tokenizer/token.h"
 #include "tokenizer/tokenizer.h"
 #include "parser/grouper.h"
-#include "parser/action.h"
+#include "parser/actionizer.h"
 
 int main(int argc, char **argv)
 {
@@ -22,4 +21,6 @@ int main(int argc, char **argv)
 
     group *global_layer = (group *)malloc(sizeof(group));
     grouper(tokens, global_layer);
+
+    struct action a = actionize(global_layer);
 }

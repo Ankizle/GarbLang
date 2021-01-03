@@ -39,7 +39,7 @@ extern "C"
         for (i = 0; i < token_len; i++)
             tokenamt += raw_tokens[i] == '\n'; //if its a newline add another slot
 
-        tokenkey *tokens = calloc(token_len, sizeof(tokenkey));
+        tokenkey *tokens = (tokenkey *)calloc(token_len, sizeof(tokenkey));
 
         for (i = 0, o = 0; i < token_len; i++)
         {
@@ -56,7 +56,7 @@ extern "C"
 
                 int space = strlen(tokens[o].name) + 1;
                 char *oldname = tokens[o].name;
-                tokens[o].name = calloc(space, sizeof(char));
+                tokens[o].name = (char *)calloc(space, sizeof(char));
 
                 //copy the string
                 strcpy(tokens[o].name, oldname);
@@ -94,13 +94,13 @@ extern "C"
         int size = ftell(f);   //get index (size)
         rewind(f);             //go back to start
 
-        char *full_source = calloc(size + 1, sizeof(char)); //alloc space
+        char *full_source = (char *)calloc(size + 1, sizeof(char)); //alloc space
         fread(full_source, 1, size, f);
         full_source[size] = 0; //put null terminator
 
-        int i, o, j;
+        int i, o;
 
-        token *tokens = malloc(sizeof(token));
+        token *tokens = (token *)malloc(sizeof(token));
         token *prev = &tokens[0];
 
         for (i = 0; i < size; i++)
@@ -109,7 +109,7 @@ extern "C"
             {
                 if (starts_with_from(full_source, parsed.tokens[o].name, i))
                 {
-                    token *t = malloc(sizeof(token));
+                    token *t = (token *)malloc(sizeof(token));
                     t->name = parsed.tokens[o].name;
                     prev->next = t;
 
@@ -120,58 +120,43 @@ extern "C"
             }
 
 //tokens that look like (open)value(closing)
-#define open_closing_token(open, close)                                     \
-    else if (full_source[i] == open)                                        \
-    {                                                                       \
-        char *name;                                                         \
-        int size = 0;                                                       \
-        i++;                                                                \
-        for (int o = i; full_source[o] != '>'; o++, size++)                 \
-            ;                                  /*get size*/                 \
-        name = calloc(size + 3, sizeof(char)); /*alloc space for var name*/ \
-        name[0] = '<';                                                      \
-        name[size + 1] = '>';                                               \
-        name[size + 2] = 0; /*null term*/                                   \
-        for (int c = 1; full_source[i] != '>'; i++, c++)                    \
-            name[c] = full_source[i];                                       \
-        token *t = malloc(sizeof(token));                                   \
-        t->name = name;                                                     \
-        prev->next = t;                                                     \
-        prev = t;                                                           \
-        goto cont;                                                          \
+#define open_closing_token(open, close)                                             \
+    else if (full_source[i] == open)                                                \
+    {                                                                               \
+        char *name;                                                                 \
+        int size = 0;                                                               \
+        i++;                                                                        \
+        for (int o = i; full_source[o] != close; o++, size++)                       \
+            ;                                          /*get size*/                 \
+        name = (char *)calloc(size + 3, sizeof(char)); /*alloc space for var name*/ \
+        name[0] = open;                                                             \
+        name[size + 1] = close;                                                     \
+        name[size + 2] = 0; /*null term*/                                           \
+        for (int c = 1; full_source[i] != close; i++, c++)                          \
+            name[c] = full_source[i];                                               \
+        token *t = (token *)malloc(sizeof(token));                                  \
+        t->name = name;                                                             \
+        prev->next = t;                                                             \
+        prev = t;                                                                   \
+        goto cont;                                                                  \
     }
 
-            if (isdigit(full_source[i]) || full_source[i] == '+' || full_source[i] == '-')
+            if (false) //required for the else if chain that will come with the open_closing_token macro
             {
-                int sign = full_source[i] == '-' ? -1 : 1;
-
-                if (full_source[i] == '-' || full_source[i] == '+')
-                    i++;
-
-#define cond(it) \
-    isdigit(full_source[it]) || full_source[it] == '.' || full_source[it] == 'L' || full_source[it] == 'C' || full_source[it] == 'U' || full_source[it] == 'F' || full_source[it] == 'D'
-
-                int size = 0;
-                for (j = i; cond(j); j++, size++)
-                    ;
-                char *numstr = calloc(size + 1, sizeof(char));
-                numstr[size] = 0; //null terminatpr
-                for (; cond(i); i++)
-                    numstr[j - size + i] = full_source[i];
-
-                token *t = malloc(sizeof(token));
-                t->name = numstr;
-                prev->next = t;
-
-                prev = t;
-                goto cont;
             }
-            open_closing_token('\'', '\'')     //char
+            open_closing_token('[', ']')       //integer
+                open_closing_token('\'', '\'') //char
                 open_closing_token('\"', '\"') //string
                 open_closing_token('<', '>')   //variable
 
                 cont:;
         }
+
+        free(full_source);
+
+        for (int i = 0; i < parsed.tokenamt; i++)
+            free(parsed.tokens[i].name);
+        free(parsed.tokens);
 
         return tokens;
     }

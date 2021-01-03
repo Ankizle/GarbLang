@@ -17,10 +17,15 @@ extern "C"
         size_t size = 0;
         token *cur = tokens->next;
 
-        size_t cbCnt = 0;
+        int cbCnt = 0;
 
         while (cur != NULL)
         {
+
+            if (parent->nested == NULL)
+                parent->nested = calloc(1, sizeof(group));
+
+            // puts(cur->name);
 
             if (strcmp(cur->name, "{") == 0)
                 cbCnt++;
@@ -42,14 +47,14 @@ extern "C"
                         cbCnt--;
 
                     if (cbCnt == 0)
+                    {
+                        cur = cur->next;
+                        nestcur->next = NULL;
                         break;
+                    }
 
-                    token *tmp = (token *)malloc(sizeof(token));
-                    *tmp = *cur;
-                    tmp->next = NULL;
-
-                    nestcur->next = tmp;
-                    nestcur = cur;
+                    nestcur->next = cur;
+                    nestcur = nestcur->next;
                     cur = cur->next;
                 }
 
@@ -58,9 +63,13 @@ extern "C"
                 grouper(nested, curparent);
                 curparent->name = "group";
                 parent->nested[size++] = *curparent;
+                free(curparent);
+
+                continue;
             }
             else
             {
+
                 parent->nested = (group *)realloc(parent->nested, sizeof(group) * (size + 1));
 
                 group g;
