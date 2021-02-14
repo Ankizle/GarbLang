@@ -12,14 +12,17 @@ extern "C"
 
     struct action
     {
-        char *name;
-        char *fnname;
+        char *name; //action name
 
-        token **operands;
-        size_t operands_len;
+        char *fnname;  //function names
+        char **params; //function parameters
+        int param_len; //amount of params
 
-        struct action *nested;
-        size_t nested_len;
+        token **operands;    //operands
+        size_t operands_len; //amount of operands
+
+        struct action *nested; //nested actions
+        size_t nested_len;     //amount o nested actions
     };
 
     void push_back_operands(token ***operands, size_t *size, token *val)
@@ -29,7 +32,7 @@ extern "C"
         if (*operands == NULL)
             *operands = calloc(sizep1, sizeof(token *));
         else
-            *operands = (token **)realloc(*operands, sizep1);
+            *operands = (token **)realloc(*operands, sizep1 * sizeof(token *));
 
         (*operands)[*size] = val;
         *size = sizep1;
@@ -43,7 +46,7 @@ extern "C"
         if (*actions == NULL)
             *actions = calloc(sizep1, sizeof(struct action));
         else
-            *actions = (struct action *)realloc(*actions, sizep1);
+            *actions = (struct action *)realloc(*actions, sizep1 * sizeof(struct action));
 
         (*actions)[*size] = val;
         *size = sizep1;

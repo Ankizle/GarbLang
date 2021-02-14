@@ -52,15 +52,16 @@ extern "C"
                 //alloc enough space
 
                 if (tokens[o].name == NULL)
-                    tokens[o].name = "";
+                    tokens[o].name = "\0";
 
                 int space = strlen(tokens[o].name) + 1;
                 char *oldname = tokens[o].name;
-                tokens[o].name = (char *)calloc(space, sizeof(char));
+                tokens[o].name = (char *)calloc(space + 1, sizeof(char)); // + 1 is used to add the null terminator
 
                 //copy the string
                 strcpy(tokens[o].name, oldname);
                 tokens[o].name[strlen(oldname)] = raw_tokens[i];
+                tokens[o].name[strlen(oldname) + 1] = 0;
             }
         }
 
@@ -110,7 +111,12 @@ extern "C"
                 if (starts_with_from(full_source, parsed.tokens[o].name, i))
                 {
                     token *t = (token *)malloc(sizeof(token));
-                    t->name = parsed.tokens[o].name;
+
+                    //copy the token name, to prevent read-after-free errors, when we free the data
+                    t->name = calloc(strlen(parsed.tokens[o].name) + 1, sizeof(char));
+                    strcpy(t->name, parsed.tokens[o].name);
+                    t->next = NULL;
+
                     prev->next = t;
 
                     prev = t;
@@ -120,30 +126,30 @@ extern "C"
             }
 
 //tokens that look like (open)value(closing)
-#define open_closing_token(open, close)                                             \
-    else if (full_source[i] == open)                                                \
-    {                                                                               \
-        char *name;                                                                 \
-        int size = 0;                                                               \
-        i++;                                                                        \
-        for (int o = i; full_source[o] != close; o++, size++)                       \
-            ;                                          /*get size*/                 \
-        name = (char *)calloc(size + 3, sizeof(char)); /*alloc space for var name*/ \
-        name[0] = open;                                                             \
-        name[size + 1] = close;                                                     \
-        name[size + 2] = 0; /*null term*/                                           \
-        for (int c = 1; full_source[i] != close; i++, c++)                          \
-            name[c] = full_source[i];                                               \
-        token *t = (token *)malloc(sizeof(token));                                  \
-        t->name = name;                                                             \
-        prev->next = t;                                                             \
-        prev = t;                                                                   \
-        goto cont;                                                                  \
+#define open_closing_token(open, close)                                              \
+    else if (full_source[i] == open)                                                 \
+    {                                                                                \
+        char *name;                                                                  \
+        int _size = 0;                                                               \
+        i++;                                                                         \
+        for (int o = i; full_source[o] != close; o++, _size++)                       \
+            ;                                           /*get size*/                 \
+        name = (char *)calloc(_size + 3, sizeof(char)); /*alloc space for var name*/ \
+        name[0] = open;                                                              \
+        name[_size + 1] = close;                                                     \
+        name[_size + 2] = 0; /*null term*/                                           \
+        for (int c = 1; full_source[i] != close; i++, c++)                           \
+            name[c] = full_source[i];                                                \
+        token *t = (token *)malloc(sizeof(token));                                   \
+        t->name = name;                                                              \
+        t->next = NULL;                                                              \
+        prev->next = t;                                                              \
+        prev = t;                                                                    \
+        goto cont;                                                                   \
     }
 
-            if (false) //required for the else if chain that will come with the open_closing_token macro
-            {
-            }
+            if (false)
+                ;                              //required for the else if chain that will come with the open_closing_token macro
             open_closing_token('[', ']')       //integer
                 open_closing_token('\'', '\'') //char
                 open_closing_token('\"', '\"') //string

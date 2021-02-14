@@ -25,8 +25,6 @@ extern "C"
             if (parent->nested == NULL)
                 parent->nested = calloc(1, sizeof(group));
 
-            // puts(cur->name);
-
             if (strcmp(cur->name, "{") == 0)
                 cbCnt++;
             else if (strcmp(cur->name, "}") == 0)

@@ -28,17 +28,30 @@ extern "C"
                 a.name = "function";
                 a.fnname = groups->nested[++i].name;
 
+                int params_count = groups->nested[++i].nested_len;
+                char **params = calloc(params_count, sizeof(char));
+
+                for (int o = 0; o < params_count; o++)
+                    params[o] = groups->nested[i].nested[o].token->name;
+
+                a.params = params;
+                a.param_len = params_count;
+
                 struct action actionized = actionize(&groups->nested[i + 1]);
 
                 a.nested = actionized.nested;
                 a.nested_len = actionized.nested_len;
+
+                a.operands_len = 0;
                 push_back_actions(&fin, &action_len, a);
             }
             else if (strcmp(groups->nested[i].name, "group") == 0)
             {
                 //group
                 struct action a = actionize(groups->nested[i].nested);
+                a.name = "group"; //identify it as a group
                 free(groups->nested[i].nested);
+                a.operands_len = 0;
                 push_back_actions(&fin, &action_len, a);
             }
             else
@@ -68,8 +81,6 @@ extern "C"
                 push_back_actions(&fin, &action_len, a);
             }
         }
-
-        free(groups->nested);
 
         //action struct to store the final list
         struct action ret;

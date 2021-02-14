@@ -1,4 +1,4 @@
-fn <main> {
-    var <a>
-    mov <a>, [1]
+fn <main> { <a> <b> } {
+    var <c>
+    mov <c>, [1]
 }

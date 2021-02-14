@@ -15,4 +15,5 @@ not
 xor
 cmp
 jmp
-ret)"
+ret
+call)"
