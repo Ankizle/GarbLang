@@ -4,6 +4,7 @@ R"(fn
 ,
 var
 mov
+cpy
 add
 sub
 mul
@@ -16,4 +17,4 @@ xor
 cmp
 jmp
 ret
-call)"
+cal)"

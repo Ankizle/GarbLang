@@ -52,6 +52,26 @@ extern "C"
         *size = sizep1;
     }
 
+    void insert_into_actions(struct action **actions, size_t *size, struct action val, int idx)
+    {
+        struct action *nacts = calloc(*size + 1, sizeof(struct action));
+        bool past_insert_index = false; //if we past the insertion index in the for loop
+
+        for (int i = 0; i < *size + 1; i++)
+        {
+            if (i == idx)
+            {
+                nacts[i] = val;
+                past_insert_index = true;
+                continue;
+            }
+            nacts[i] = (*actions)[i - past_insert_index]; //if we past the insertion index, we gotta look one index back in the orig actions
+        }
+
+        *actions = nacts;
+        *size = *size + 1;
+    }
+
 #ifdef __cplusplus
 }
 #endif

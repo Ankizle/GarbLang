@@ -7,6 +7,7 @@
 #include "parser/grouper.h"
 #include "parser/actionizer.h"
 #include "parser/renamer.h"
+#include "parser/insert_garbage_collection.h"
 
 int main(int argc, char **argv)
 {
@@ -23,4 +24,5 @@ int main(int argc, char **argv)
 
     struct action a = actionize(global_layer);
     change_varnames(a.nested, a.nested_len, 0);
+    insert_frees("global", &a.nested, &a.nested_len);
 }

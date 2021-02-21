@@ -1,4 +1,9 @@
-fn <main> { <a> <b> } {
+fn <main> { } {
+    var <a>
+    var <b>
     var <c>
-    mov <c>, [1]
+
+    fn <d> { } { }
+
+    ret <d>
 }

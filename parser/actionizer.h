@@ -37,7 +37,7 @@ extern "C"
                 a.params = params;
                 a.param_len = params_count;
 
-                struct action actionized = actionize(&groups->nested[i + 1]);
+                struct action actionized = actionize(&groups->nested[++i]);
 
                 a.nested = actionized.nested;
                 a.nested_len = actionized.nested_len;
@@ -48,7 +48,8 @@ extern "C"
             else if (strcmp(groups->nested[i].name, "group") == 0)
             {
                 //group
-                struct action a = actionize(groups->nested[i].nested);
+
+                struct action a = actionize(&groups->nested[i]);
                 a.name = "group"; //identify it as a group
                 free(groups->nested[i].nested);
                 a.operands_len = 0;
