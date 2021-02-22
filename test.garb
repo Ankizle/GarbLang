@@ -1,9 +1,16 @@
-fn <main> { } {
+fn <main> {
     var <a>
-    var <b>
     var <c>
+    var <one>
 
-    fn <d> { } { }
+    set <c>, [0], [-100000]
+    set <one>, [0], [1]
 
-    ret <d>
+    lbl <b>
+
+    add <c>, <one>
+
+    jmpls <c>, <b>
+
+    ret <a>
 }

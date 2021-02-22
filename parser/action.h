@@ -14,9 +14,7 @@ extern "C"
     {
         char *name; //action name
 
-        char *fnname;  //function names
-        char **params; //function parameters
-        int param_len; //amount of params
+        char *fnname; //function names
 
         token **operands;    //operands
         size_t operands_len; //amount of operands
@@ -30,7 +28,7 @@ extern "C"
         size_t sizep1 = *size + 1; //calculate this value so we dont have to waste time doing it twice later (i am a micro optimizer)
 
         if (*operands == NULL)
-            *operands = calloc(sizep1, sizeof(token *));
+            *operands = (token **)calloc(sizep1, sizeof(token *));
         else
             *operands = (token **)realloc(*operands, sizep1 * sizeof(token *));
 
@@ -44,7 +42,7 @@ extern "C"
         size_t sizep1 = *size + 1; //calculate this value so we dont have to waste time doing it twice later (i am a micro optimizer)
 
         if (*actions == NULL)
-            *actions = calloc(sizep1, sizeof(struct action));
+            *actions = (struct action *)calloc(sizep1, sizeof(struct action));
         else
             *actions = (struct action *)realloc(*actions, sizep1 * sizeof(struct action));
 
@@ -54,7 +52,7 @@ extern "C"
 
     void insert_into_actions(struct action **actions, size_t *size, struct action val, int idx)
     {
-        struct action *nacts = calloc(*size + 1, sizeof(struct action));
+        struct action *nacts = (struct action *)calloc(*size + 1, sizeof(struct action));
         bool past_insert_index = false; //if we past the insertion index in the for loop
 
         for (int i = 0; i < *size + 1; i++)

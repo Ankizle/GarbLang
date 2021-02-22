@@ -28,15 +28,6 @@ extern "C"
                 a.name = "function";
                 a.fnname = groups->nested[++i].name;
 
-                int params_count = groups->nested[++i].nested_len;
-                char **params = calloc(params_count, sizeof(char));
-
-                for (int o = 0; o < params_count; o++)
-                    params[o] = groups->nested[i].nested[o].token->name;
-
-                a.params = params;
-                a.param_len = params_count;
-
                 struct action actionized = actionize(&groups->nested[++i]);
 
                 a.nested = actionized.nested;

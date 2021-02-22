@@ -52,8 +52,37 @@ extern "C"
 
         for (int i = 0; i < a_len; i++)
         {
+            //count the labels
+            if (strcmp(actions[i].name, "lbl") == 0)
+            {
+                //label declaration
 
-            if (strcmp(actions[i].name, "var") == 0)
+                if (actions[i].operands_len != 1)
+                {
+                    //error that there must be a name when declaring a label
+                }
+
+                struct varname_changer v;
+                v.oldname = actions[i].operands[0]->name;
+
+                int namesize = snprintf(NULL, 0, "%d", varcount); //calculate the length of the new label name
+                v.newname = calloc(namesize + 2, sizeof(char));
+                snprintf(v.newname, namesize + 2, "l%d", varcount++); //'l' signifies a label
+
+                actions[i].operands[0]->name = v.newname;
+
+                v.scope_id = scope_id;
+
+                add_new_name(v);
+            }
+        }
+
+        for (int i = 0; i < a_len; i++)
+        {
+
+            if (strcmp(actions[i].name, "lbl") == 0) //we counted labels beforehand
+                continue;
+            else if (strcmp(actions[i].name, "var") == 0)
             {
                 //variable declaration
 
@@ -67,7 +96,7 @@ extern "C"
 
                 int namesize = snprintf(NULL, 0, "%d", varcount); //calculate the length of the new variable name
                 v.newname = calloc(namesize + 2, sizeof(char));
-                snprintf(v.newname, namesize + 2, ">%d", varcount++); //'>' signifies a variable
+                snprintf(v.newname, namesize + 2, "v%d", varcount++); //'v' signifies a variable
 
                 actions[i].operands[0]->name = v.newname;
 
@@ -90,7 +119,7 @@ extern "C"
 
                 int namesize = snprintf(NULL, 0, "%d", varcount); //calculate the length of the new variable name
                 v.newname = calloc(namesize + 2, sizeof(char));
-                snprintf(v.newname, namesize + 2, ">%d", varcount++); //'>' signifies a variable
+                snprintf(v.newname, namesize + 2, "v%d", varcount++); //'v' signifies a variable
 
                 actions[i].fnname = v.newname;
 
@@ -110,7 +139,9 @@ extern "C"
 
                     if (actions[i].operands[j]->name[0] == '<')
                         //its a variable
-                        actions[i].operands[j]->name = get_new_name(actions[i].operands[j]->name, scope_id);
+                        actions[i]
+                            .operands[j]
+                            ->name = get_new_name(actions[i].operands[j]->name, scope_id);
         }
 
         name_cleanup(scope_id);

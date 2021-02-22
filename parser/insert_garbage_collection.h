@@ -24,18 +24,12 @@ extern "C"
                 add_varname_association((*actions)[i].operands[0]->name, (*actions)[i].operands[0]->name); //associate the host variable with itself
             }
             else if (strcmp((*actions)[i].name, "function") == 0)
-            {
-
-                add_varname_association(fnname, (*actions)[i].fnname);               //associate with the function
-                add_varname_association((*actions)[i].fnname, (*actions)[i].fnname); //associate the host variable with itself
-
                 insert_frees((*actions)[i].fnname, &(*actions)[i].nested, &(*actions)[i].nested_len);
-            }
             else if (strcmp((*actions)[i].name, "group") == 0)
                 insert_frees(fnname, &(*actions)[i].nested, &(*actions)[i].nested_len);
             else if (strcmp((*actions)[i].name, "ret") == 0)
             {
-                if ((*actions)[i].operands_len != 1 || (*actions)[i].operands[0]->name[0] != '>')
+                if ((*actions)[i].operands_len != 1 || (*actions)[i].operands[0]->name[0] != 'v')
                     ; //panic that it must be returning a variable address
 
                 char *retname = (*actions)[i].operands[0]->name;
@@ -46,13 +40,14 @@ extern "C"
                     struct action a;
                     a.name = "free";
 
-                    a.operands = calloc(1, sizeof(token));
+                    a.operands = calloc(1, sizeof(token *));
                     a.operands_len = 1;
 
-                    token t;
-                    t.name = d.vars[o];
+                    token *t = calloc(1, sizeof(token));
+                    t->name = d.vars[o];
 
-                    a.operands[0] = &t;
+                    a.operands[0] = t;
+
                     insert_into_actions(actions, a_len, a, i);
                     i++;
                 }
@@ -62,20 +57,24 @@ extern "C"
                     struct action a;
                     a.name = "bind";
 
-                    a.operands = calloc(1, sizeof(token));
-                    a.operands_len = 1;
+                    a.operands = calloc(2, sizeof(token *));
+                    a.operands_len = 2;
 
-                    token t;
-                    t.name = d.associated[o];
+                    token *t1 = calloc(1, sizeof(token));
+                    t1->name = d.associated[o];
 
-                    a.operands[0] = &t;
+                    token *t2 = calloc(1, sizeof(token));
+                    t2->name = retname;
+
+                    a.operands[0] = t1;
+                    a.operands[1] = t2;
                     insert_into_actions(actions, a_len, a, i);
                     i++;
                 }
             }
             else
                 for (int o = 0; o < (*actions)[i].operands_len; o++)
-                    if ((*actions)[i].operands[o]->name[0] == '>') //'>' is a variable
+                    if ((*actions)[i].operands[o]->name[0] == 'v') //'v' is a variable
                         add_varname_association(fnname, (*actions)[i].operands[o]->name);
         }
     }

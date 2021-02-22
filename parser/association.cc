@@ -18,6 +18,10 @@ void varname_assoc::add_varname_association(char *name, char *associate)
                 name, v));
     }
 
+    //make sure its not counted twice
+    if (std::find(varnames_association[std::string(name)].begin(), varnames_association[std::string(name)].end(), associate) != varnames_association[std::string(name)].end())
+        return;
+
     varnames_association[std::string(name)].push_back(associate);
 }
 

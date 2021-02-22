@@ -149,11 +149,9 @@ extern "C"
     }
 
             if (false)
-                ;                              //required for the else if chain that will come with the open_closing_token macro
-            open_closing_token('[', ']')       //integer
-                open_closing_token('\'', '\'') //char
-                open_closing_token('\"', '\"') //string
-                open_closing_token('<', '>')   //variable
+                ;                            //required for the else if chain that will come with the open_closing_token macro
+            open_closing_token('[', ']')     //integer
+                open_closing_token('<', '>') //variable
 
                 cont:;
         }
