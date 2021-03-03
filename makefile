@@ -3,13 +3,17 @@ all: garblang.bin
 
 .PHONY: clean
 clean:
+	rm -rf association_bind.o
+	rm -rf association.o
+	rm -rf convert_statement.o
+	rm -rf garblang.o
 	rm -rf garblang.bin
 
 .PHONY: test
 test: all
 	./garblang.bin test.garb
 	g++ out.cc -o test.bin
-	./test.bin
+	time ./test.bin
 
 .PHONY: garblang.bin
 garblang.bin:

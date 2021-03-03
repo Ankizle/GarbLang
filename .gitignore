@@ -4,3 +4,4 @@
 *.so
 .vscode/
 .gdb_history
+out.cc

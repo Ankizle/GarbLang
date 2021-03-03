@@ -68,15 +68,7 @@ extern "C"
             }
         }
 
-        fputs(R"(int main() { 
-                auto start = std::chrono::high_resolution_clock::now(); 
-                v0();
-                auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-                
-                
-                std::cout << "Execution Speed: " << duration.count() << " microseconds" << std::endl; 
-            })",
+        fputs("int main() { v0();}",
               out);
     }
 

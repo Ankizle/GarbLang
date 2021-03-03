@@ -11,7 +11,7 @@ std::map<std::string, std::function<void(FILE *f, char **operands, size_t len)>>
 		 fprintf(f, "memcpy(%s, %s);", operands[0], operands[1]);
 	 }},
 	{"alc", [](FILE *f, char **operands, size_t len) {
-		 fprintf(f, "%s = (long long*)realloc(%s, %s);", operands[0], operands[0], operands[1]);
+		 fprintf(f, "%s = (long long*)realloc(%s, *%s);", operands[0], operands[0], operands[1]);
 	 }},
 	{"free", [](FILE *f, char **operands, size_t len) {
 		 fprintf(f, "gfree(%s);", operands[0]);

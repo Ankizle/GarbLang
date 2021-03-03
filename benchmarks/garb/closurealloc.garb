@@ -1,0 +1,27 @@
+fn <main> {
+    var <a>
+    var <b>
+    var <c>
+    var <one>
+
+    set <c>, [0], [-1000000]
+    set <one>, [0], [1]
+
+    add <c>, <one>
+
+    call <test>, <a>
+    call <a>, <b>
+
+    jmpls <c>, <b>
+}
+
+fn <test> {
+
+    var <shared>
+
+    fn <ret> {
+        return <shared>
+    }
+
+    return <ret>
+}

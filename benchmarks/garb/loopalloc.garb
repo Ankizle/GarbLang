@@ -3,12 +3,13 @@ fn <main> {
     var <c>
     var <one>
 
-    set <c>, [0], [-100000]
+    set <c>, [0], [-1000000]
     set <one>, [0], [1]
 
     lbl <b>
 
     add <c>, <one>
+    alc <a>, <c>
 
     jmpls <c>, <b>
 
