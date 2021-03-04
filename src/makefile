@@ -8,12 +8,8 @@ clean:
 	rm -rf convert_statement.o
 	rm -rf garblang.o
 	rm -rf garblang.bin
-
-.PHONY: test
-test: all
-	./garblang.bin test.garb
-	g++ out.cc -o test.bin
-	time ./test.bin
+	rm -rf benchmarks/garblang.bin
+	rm -rf github.com
 
 .PHONY: garblang.bin
 garblang.bin:
@@ -24,4 +20,10 @@ garblang.bin:
 
 	g++ -g association.o convert_statement.o association_bind.o garblang.o -o garblang.bin
 
+.PHONY: compare
+benchmark: all
+	rm -rf benchmarks/data.xlsx
 
+	mv garblang.bin benchmarks/garblang.bin
+	GOPATH=$(CURDIR)/../ go get github.com/360EntSecGroup-Skylar/excelize
+	cd benchmarks && GOPATH=$(CURDIR)/../ go run start.go

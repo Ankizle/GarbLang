@@ -5,3 +5,7 @@
 .vscode/
 .gdb_history
 out.cc
+github.com/
+golang.org
+*.xlsx
+pkg/

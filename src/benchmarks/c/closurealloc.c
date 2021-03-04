@@ -20,8 +20,6 @@ int main()
 {
 
     for (int i = 0; i < 1000000; i++)
-    {
-        int a = test()();
-        free(shared);
-    }
+        test()();
+    free(shared);
 }
