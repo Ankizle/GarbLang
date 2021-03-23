@@ -22,7 +22,7 @@ extern "C"
 
         fputs(R"(
 
-            typedef int (*genf)();
+            typedef long long* (*genf)();
 
             std::map<void*, std::vector<void*>> links;
 
@@ -68,8 +68,7 @@ extern "C"
             }
         }
 
-        fputs("int main() { v0();}",
-              out);
+        fputs("int main() { _main(); }", out);
     }
 
 #ifdef __cplusplus

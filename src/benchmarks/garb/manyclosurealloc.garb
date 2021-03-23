@@ -1,0 +1,53 @@
+fn <test> {
+
+    var <shared>
+
+    alcn <shared>, [100]
+
+    var <cnt>
+    set <cnt>, [0], [-100]
+
+    var <uno>
+    set <uno>, [0], [1]
+
+    lbl <tmp>
+
+    add <cnt>, <uno>
+
+    var <tmp1>
+    setv <tmp1>, <cnt>, [0]
+    
+    var <hundred>
+    set <hundred>, [0], [100]
+
+    add <tmp1>, <hundred>
+
+    setv <shared>, <tmp1>, [1]
+
+    jmpls <cnt>, <tmp>
+
+    fn <ret> {
+        return <shared>
+    }
+
+    return <ret>
+}
+
+fn <main> {
+    var <a>
+    var <b>
+    var <c>
+    var <one>
+
+    set <c>, [0], [-1000000]
+    set <one>, [0], [1]
+
+    lbl <label>
+
+    add <c>, <one>
+
+    cal <test>, <a>
+    calp <a>, <b>
+
+    jmpls <c>, <label>
+}

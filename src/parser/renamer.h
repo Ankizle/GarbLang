@@ -52,6 +52,7 @@ extern "C"
 
         for (int i = 0; i < a_len; i++)
         {
+
             //count the labels
             if (strcmp(actions[i].name, "lbl") == 0)
             {
@@ -117,17 +118,26 @@ extern "C"
                 struct varname_changer v;
                 v.oldname = actions[i].fnname;
 
-                int namesize = snprintf(NULL, 0, "%d", varcount); //calculate the length of the new variable name
-                v.newname = calloc(namesize + 2, sizeof(char));
-                snprintf(v.newname, namesize + 2, "v%d", varcount++); //'v' signifies a variable
+                if (strcmp(actions[i].fnname, "<main>") == 0)
+                {
+                    actions[i].fnname = "_main";
+                    v.scope_id = scope_id;
+                    add_new_name(v);
+                }
+                else
+                {
+                    int namesize = snprintf(NULL, 0, "%d", varcount); //calculate the length of the new variable name
+                    v.newname = calloc(namesize + 2, sizeof(char));
+                    snprintf(v.newname, namesize + 2, "v%d", varcount++); //'v' signifies a variable
 
-                actions[i].fnname = v.newname;
+                    actions[i].fnname = v.newname;
 
-                v.scope_id = scope_id;
+                    v.scope_id = scope_id;
 
-                add_new_name(v);
+                    add_new_name(v);
 
-                ///////////////////////////////////
+                    ///////////////////////////////////
+                }
 
                 //change the variables in the function body
                 change_varnames(actions[i].nested, actions[i].nested_len, ++cur_scope_id);

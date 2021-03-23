@@ -13,6 +13,9 @@ std::map<std::string, std::function<void(FILE *f, char **operands, size_t len)>>
 	{"alc", [](FILE *f, char **operands, size_t len) {
 		 fprintf(f, "%s = (long long*)realloc(%s, *%s);", operands[0], operands[0], operands[1]);
 	 }},
+	{"alcn", [](FILE *f, char **operands, size_t len) {
+		 fprintf(f, "%s = (long long*)realloc(%s, %s);", operands[0], operands[0], operands[1]);
+	 }},
 	{"free", [](FILE *f, char **operands, size_t len) {
 		 fprintf(f, "gfree(%s);", operands[0]);
 	 }},
@@ -78,6 +81,15 @@ std::map<std::string, std::function<void(FILE *f, char **operands, size_t len)>>
 	 }},
 	{"lbl", [](FILE *f, char **operands, size_t len) {
 		 fprintf(f, "%s:;", operands[0]);
+	 }},
+	{"setnv", [](FILE *f, char **operands, size_t len) {
+		 fprintf(f, "%s[%s] = *%s;", operands[0], operands[1], operands[2]);
+	 }},
+	{"setvv", [](FILE *f, char **operands, size_t len) {
+		 fprintf(f, "%s[*%s] = *%s;", operands[0], operands[1], operands[2]);
+	 }},
+	{"setv", [](FILE *f, char **operands, size_t len) {
+		 fprintf(f, "%s[*%s] = %s;", operands[0], operands[1], operands[2]);
 	 }},
 	{"set", [](FILE *f, char **operands, size_t len) {
 		 fprintf(f, "%s[%s] = %s;", operands[0], operands[1], operands[2]);

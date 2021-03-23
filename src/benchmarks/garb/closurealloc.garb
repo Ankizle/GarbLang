@@ -1,20 +1,3 @@
-fn <main> {
-    var <a>
-    var <b>
-    var <c>
-    var <one>
-
-    set <c>, [0], [-1000000]
-    set <one>, [0], [1]
-
-    add <c>, <one>
-
-    call <test>, <a>
-    call <a>, <b>
-
-    jmpls <c>, <b>
-}
-
 fn <test> {
 
     var <shared>
@@ -24,4 +7,23 @@ fn <test> {
     }
 
     return <ret>
+}
+
+fn <main> {
+    var <a>
+    var <b>
+    var <c>
+    var <one>
+
+    set <c>, [0], [-100000]
+    set <one>, [0], [1]
+
+    lbl <label>
+
+    add <c>, <one>
+
+    cal <test>, <a>
+    calp <a>, <b>
+
+    jmpls <c>, <label>
 }

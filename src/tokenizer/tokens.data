@@ -4,6 +4,7 @@ R"(fn
 ,
 var
 mov
+alcn
 alc
 add
 sub
@@ -22,7 +23,10 @@ jmpeq
 jmpls
 jmpgt
 ret
-cal
 calp
+cal
 lbl
+setnv
+setvn
+setv
 set)"

@@ -9,3 +9,4 @@ github.com/
 golang.org
 *.xlsx
 pkg/
+src/benchmarks/**/*.cc

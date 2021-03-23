@@ -11,6 +11,12 @@ clean:
 	rm -rf benchmarks/garblang.bin
 	rm -rf github.com
 
+	#remove any remaining .bin files
+	find . -name '*.bin' -type f -delete
+
+	#remove .cc files in benchmarks (residue from garb)
+	find ./benchmarks -name '*.cc' -type f -delete
+
 .PHONY: garblang.bin
 garblang.bin:
 	g++ -fpic -c parser/association.cc -o association.o

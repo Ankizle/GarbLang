@@ -22,13 +22,15 @@ int main(int argc, char **argv)
     grouper(tokens, global_layer);
 
     struct action a = actionize(global_layer);
+
     change_varnames(a.nested, a.nested_len, 0);
+
     insert_frees("global", &a.nested, &a.nested_len);
 
     struct fetch_vars_ret vars = fetch_vars(a.nested, a.nested_len);
 
     //output file name
-    char *output_name = "out.cc";
+    char *output_name = argv[2];
 
     FILE *fp = fopen(output_name, "w");
     compile(fp, a.nested, a.nested_len, vars);
